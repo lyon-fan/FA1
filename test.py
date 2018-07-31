@@ -1,0 +1,2 @@
+len(varByIV)
+len(compare)

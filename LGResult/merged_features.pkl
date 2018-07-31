@@ -1,0 +1,24 @@
+(dp0
+VSocialNetwork_17
+p1
+(lp2
+S'SocialNetwork_17_mergeByBadRate'
+p3
+a(dp4
+S'1'
+p5
+S'Bin 2'
+p6
+sS'0'
+p7
+S'Bin 0'
+p8
+sS'3'
+p9
+S'Bin 0'
+p10
+sS'2'
+p11
+S'Bin 1'
+p12
+sas.
