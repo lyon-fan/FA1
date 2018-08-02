@@ -12,6 +12,9 @@ import collections
 import pickle
 from itertools import combinations
 from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LogisticRegressionCV
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
 import statsmodels.api as sm
 
 import chinaPnr.utility.explore as u_explore
@@ -78,7 +81,7 @@ if __name__ == "__main__":
     # u_others.list2txt(path_explore_result, "var_string_list.csv", string_var_list)
     # u_others.list2txt(path_explore_result, "var_number_list.csv", number_var_list)
     # u_others.list2txt(path_explore_result, "all_var_list.csv", all_var_list)
-    # # -------------------------------------------------------------------------------------------------
+    # -------------------------------------------------------------------------------------------------
     # # todo 手动调字符串类型 连续型
     # # todo 如果重新跑数据 或者调整字段则 用txt2list()重新加载即可
     # string_var_list = u_others.txt2list(path_explore_result+"\\var_string_list.csv")
@@ -145,7 +148,7 @@ if __name__ == "__main__":
     #
     # allData.to_csv(path_csv+"\\"+"allData_makeup_missing.csv", header=True, encoding="gbk", columns=allData.columns,
     #                index=False)
-    #
+
     # """
     # 变量分组 计算WOE IV
     # """
@@ -534,7 +537,6 @@ if __name__ == "__main__":
     iv_threshould = 0.02
     var_IV_sorted_1 = [k for k, v in var_iv_dict.items() if v > iv_threshould]
 
-    # todo 针对变量IV值 进行变量挑选 不然两两线性相关会计算量可能很大
     """
     检查WOE编码后的变量的两两线性相关性
     """
@@ -546,12 +548,13 @@ if __name__ == "__main__":
         (x1, x2) = pair
         roh = np.corrcoef([trainData[str(x1)+"_WOE"], trainData[str(x2)+"_WOE"]])[0, 1]
         if abs(roh) >= roh_thresould:
+            print
+            '相关系数：【{0}】 【{1}】 ：is {2}'.format(x1, x2, str(roh))
             if var_iv_dict[x1] > var_iv_dict[x2]:
                 removed_var.append(x2)
             else:
                 removed_var.append(x1)
     var_IV_sorted_2 = [i for i in var_IV_selected if i not in removed_var]
-
     """
     检查是否有变量与其他所有变量的VIF > 10
     """
@@ -570,7 +573,7 @@ if __name__ == "__main__":
             print("Warning: the vif for {0} is {1}".format(var_IV_sorted_2[i], vif))
 
     """
-    建模1
+    建模1：在单因素分析和多因素分析的基础上，利用选择变量建立Logistic回归分析
     """
     var_WOE_list = [i+"_WOE" for i in var_IV_sorted_2]
     y = trainData[col_target]
@@ -578,9 +581,81 @@ if __name__ == "__main__":
     X["intercept"] = [1]*X.shape[0]
 
     LR = sm.Logit(y, X).fit()
-    summary = LR.summary()
+    summary = LR.summary2()
     pvals = LR.pvalues
     pvals = pvals.to_dict()
+    # 有些特征并不重要，因此我们需要逐个删除特征
+    varLargeP = {k: v for k, v in pvals.items() if v >= 0.1}
+    varLargeP = sorted(varLargeP.items(), key=lambda d: d[1], reverse=True)
+    # 在每次迭代中，我们删除最无关紧要的特征并重新构建回归，直到
+    # (1) 所有的特征都是显著的
+    # (2) 没有选择的特征
+    while (len(varLargeP) > 0) and (len(var_WOE_list)) > 0:
+        varMaxP = varLargeP[0][0]
+        if varMaxP == 'intercept':
+            print('截距不显著!')
+            break
+        var_WOE_list.remove(varMaxP)
+        y = trainData[col_target]
+        X = trainData[var_WOE_list]
+        X['intercept'] = [1] * X.shape[0]
+
+        LR = sm.Logit(y, X).fit()
+        summary = LR.summary2()
+        pvals = LR.pvalues
+        pvals = pvals.to_dict()
+        varLargeP = {k: v for k, v in pvals.items() if v >= 0.1}
+        varLargeP = sorted(varLargeP.items(), key=lambda d: d[1], reverse=True)
+    # 现在所有的特征都是显著的，系数的符号是负的
+    # 保存模型
+    saveModel = open(path_pkl+"\\"+'LR_Model_Normal.pkl', 'wb')
+    pickle.dump(LR, saveModel)
+    saveModel.close()
+    """
+    建模2：利用LASSO和基于上步给出的变量的权重构建logistic回归
+    """
+    X = trainData[var_WOE_list]
+    X = np.matrix(X)
+    y = trainData[col_target]
+    y = np.array(y)
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=0)
+    X_train.shape, y_train.shape
+
+    model_parameter = {}
+    for C_penalty in np.arange(0.005, 0.2, 0.005):
+        for bad_weight in range(2, 101, 2):
+            LR_model_2 = LogisticRegressionCV(Cs=[C_penalty], penalty='l1', solver='liblinear',
+                                              class_weight={1: bad_weight, 0: 1})
+            LR_model_2_fit = LR_model_2.fit(X_train, y_train)
+            y_pred = LR_model_2_fit.predict_proba(X_test)[:, 1]
+            scorecard_result = pd.DataFrame({'prob': y_pred, 'target': y_test})
+            performance = u_model.ks_ar(scorecard_result, 'prob', 'target')
+            KS = performance['KS']
+            model_parameter[(C_penalty, bad_weight)] = KS
+    """
+    根据RF特征重要性建立Logistic回归
+    """
+    # 建立随机森林模型来估计每个特征的重要性
+    # 在这种情况下，在单次分析之前，我们先用原始编码进行编码。
+    X = trainData[var_WOE_list]
+    X = np.matrix(X)
+    y = trainData[col_target]
+    y = np.array(y)
+
+    RFC = RandomForestClassifier()
+    RFC_Model = RFC.fit(X, y)
+    features_rfc = trainData[var_WOE_list].columns
+    featureImportance = {features_rfc[i]: RFC_Model.feature_importances_[i] for i in range(len(features_rfc))}
+    featureImportanceSorted = sorted(featureImportance.iteritems(), key=lambda x: x[1], reverse=True)
+    # 选择重要性排前十的变量
+    features_selection = [k[0] for k in featureImportanceSorted[:10]]
+    # 建立逻辑回归
+    y = trainData[col_target]
+    X = trainData[features_selection]
+    X['intercept'] = [1]*X.shape[0]
+    LR = sm.Logit(y, X).fit()
+    summary = LR.summary()
 
     # ##########################################################
     # #################6、Assess                  ###############
