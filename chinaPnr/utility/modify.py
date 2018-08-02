@@ -36,9 +36,9 @@ import chinaPnr.utility.explore as u_explore
 def makeup_num_miss(p_df, p_var_list, p_method):
     """
     按照指定的方法对数据集的数字类型数据进行填充
-    :param p_df:数据集
-    :param p_var_list:数字型变量名称list
-    :param p_method:填充方法 'MEAN' 'RANDOM' 'PERC50'
+    :param p_df:        数据集
+    :param p_var_list:  数字型变量名称list
+    :param p_method:    填充方法 'MEAN' 'RANDOM' 'PERC50'
     :return:
     """
 
@@ -61,9 +61,9 @@ def makeup_num_miss(p_df, p_var_list, p_method):
 def makeup_num_miss_for_1(p_df, p_var, p_method):
     """
     按照指定的方法对数据集的指定列数字类型数据进行填充
-    :param p_df:数据集
-    :param p_var:数字型变量名称
-    :param p_method:填充方法 'MEAN' 'RANDOM' 'PERC50'
+    :param p_df:        数据集
+    :param p_var:       数字型变量名称
+    :param p_method:    填充方法 'MEAN' 'RANDOM' 'PERC50'
     :return:
     """
 
@@ -100,9 +100,9 @@ def makeup_num_miss_for_1(p_df, p_var, p_method):
 def makeup_str_miss(p_df, p_str_var_list, p_method):
     """
     按照指定的方法对数据集的字符串类型数据进行填充
-    :param p_df: 数据集
-    :param p_str_var_list: 字符类型变量名称list
-    :param p_method: 填充方法 'MODE' 'RANDOM'
+    :param p_df:            数据集
+    :param p_str_var_list:  字符类型变量名称list
+    :param p_method:        填充方法 'MODE' 'RANDOM'
     :return:
     """
     if p_method.upper() not in ['MODE', 'RANDOM']:
@@ -118,9 +118,9 @@ def makeup_str_miss(p_df, p_str_var_list, p_method):
 def makeup_str_miss_for_1(p_df, p_var, p_method):
     """
     按照指定的方法对数据集的指定列字符串类型数据进行填充
-    :param p_df: 数据集
-    :param p_var: 字符类型变量名称list
-    :param p_method: 填充方法 'MODE' 'RANDOM'
+    :param p_df:        数据集
+    :param p_var:       字符类型变量名称list
+    :param p_method:    填充方法 'MODE' 'RANDOM'
     :return:
     """
     # p_df=pd1
@@ -155,10 +155,10 @@ def makeup_str_miss_for_1(p_df, p_var, p_method):
 def density_encoder_for_1(p_df, p_var, p_target):
     """
     对类别变量进行浓度编码 包括Nan
-    :param p_df: 数据集
-    :param p_var: 要分析的类别型变量的变量名
-    :param p_target: 响应变量名
-    :return: 返回每个类别对应的响应率
+    :param p_df:        数据集
+    :param p_var:       要分析的类别型变量的变量名
+    :param p_target:    响应变量名
+    :return:            返回每个类别对应的响应率
     """
     # df = data_all
     # col = 'marital'
@@ -181,9 +181,9 @@ def density_encoder_for_1(p_df, p_var, p_target):
 def density_encoder(p_df, p_str_list, p_target):
     """
     对数据集所有字符型特征进行浓度编码
-    :param p_df: 数据集
-    :param p_str_list: 字符型变量名称list
-    :param p_target: 目标变量
+    :param p_df:        数据集
+    :param p_str_list:  字符型变量名称list
+    :param p_target:    目标变量
     :return:
     """
     for var in p_str_list:
@@ -340,11 +340,11 @@ def woe_iv_for_string(p_df,
     :param p_str_var_list:
     :param p_num_var_list
     :param p_target
-    :param p_deleted_var_list: 删除变量的list
-    :param p_encoded_var_dict: 浓度编码的list
-    :param p_merged_var_dict: 进行合并的list
-    :param p_var_iv_dict: IV列表
-    :param p_var_woe_dict: WOE列表
+    :param p_deleted_var_list:  删除变量的list
+    :param p_encoded_var_dict:  浓度编码的字典
+    :param p_merged_var_dict:   进行合并的字典
+    :param p_var_iv_dict:       IV字典
+    :param p_var_woe_dict:      WOE字典
     :return:
     """
     for var in p_str_var_list:
@@ -449,9 +449,9 @@ def inner_assign_group(p_value, p_bin):
 def assign_bin(p_x, p_cutoff_points):
     """
     根据分箱点将连续型原数据进行转化 转化为类别型
-    :param p_x: the value of variable
-    :param p_cutoff_points: the ChiMerge result for continous variable
-    :return: bin number, indexing from 0
+    :param p_x:             变量
+    :param p_cutoff_points: 连续变量的卡方分箱点
+    :return: 分享结果
     for example, if cutOffPoints = [10,20,30], if x = 7, return Bin 0. If x = 35, return Bin 3
     """
     num_bin = len(p_cutoff_points) + 1
@@ -465,20 +465,20 @@ def assign_bin(p_x, p_cutoff_points):
                 return 'Bin {}'.format(i+1)
 
 
-def bad_rate_monotone(p_df, sort_by_var, p_target, p_special_attribute=[]):
+def bad_rate_monotone(p_df, p_var, p_target, p_special_attribute=[]):
     """
     检查各个分箱是否单调，单调返回True，否则返回False
-    :param p_df: the dataset contains the column which should be monotone with the bad rate and bad column
-    :param sort_by_var: the column which should be monotone with the bad rate
-    :param p_target: the bad column
-    :param p_special_attribute: some attributes should be excluded when checking monotone
+    :param p_df:
+    :param p_var:               要检查的列
+    :param p_target:            目标变量列
+    :param p_special_attribute: 特殊值 不检查
     :return:
     """
-    df2 = p_df.loc[~p_df[sort_by_var].isin(p_special_attribute)]
-    df2 = df2.sort_values([sort_by_var])
-    total = df2.groupby([sort_by_var])[p_target].count()
+    df2 = p_df.loc[~p_df[p_var].isin(p_special_attribute)]
+    df2 = df2.sort_values([p_var])
+    total = df2.groupby([p_var])[p_target].count()
     total = pd.DataFrame({'total': total})
-    bad = df2.groupby([sort_by_var])[p_target].sum()
+    bad = df2.groupby([p_var])[p_target].sum()
     bad = pd.DataFrame({'bad': bad})
     regroup = total.merge(bad, left_index=True, right_index=True, how='left')
     regroup.reset_index(level=0, inplace=True)
@@ -492,14 +492,13 @@ def bad_rate_monotone(p_df, sort_by_var, p_target, p_special_attribute=[]):
         return False
 
 
-def chi_merge_max_interval(p_df, p_col, p_target, p_max_bin=5, p_special_attribute=[]):
+def chi_merge_max_interval(p_df, p_col, p_target, p_max_bin=5):
     """
     根据最大卡方法 对连续变量进行分箱 默认最大分箱数为5
     :param p_df:
     :param p_col:
     :param p_target:
     :param p_max_bin:
-    :param p_special_attribute:
     :return:
     """
     # 1、如果取值少于5个 则直接返回
@@ -619,6 +618,7 @@ def woe_iv_for_num(p_df, p_str_num_list, p_target, p_deleted_var_list, p_var_iv_
         p_var_iv_dict[col] = woe_iv['IV']
         # del p_df[col]
     print("function woe_iv_for_num finished!...................")
+
 
 def standard_max_min(p_df, p_var, p_target):
     """
