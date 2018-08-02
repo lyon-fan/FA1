@@ -4,15 +4,15 @@
 
 # Index
 # ----------------------------------------
-# get_list_for_number_str_col 将dataframe中的字段名称分为字符型、数值型两个list返回
-# num_var_perf    探索数值型变量的分布
-# str_var_pref    探索字符型变量的分布
-# time_window_selection   根据给定的时间窗口 进行累计计数 保存图像 并返回结果
-# missing_categorial_for_1 为某一个类别型变量统计缺失值
-# missing_continuous_for_1 为某一个数值型变量统计缺失值 返回缺失率
-# missing_categorial 为df中所有类别型变量统计缺失值
-# missing_continuous 为df中所有连续型变量统计缺失值
-# max_bin_pcnt 计算各个类别的占比 返回series
+# get_list_for_number_str_col   将dataframe中的字段名称分为字符型、数值型两个list返回
+# num_var_perf                  探索数值型变量的分布
+# str_var_pref                  探索字符型变量的分布
+# time_window_selection         根据给定的时间窗口 进行累计计数 保存图像 并返回结果
+# missing_categorial_for_1      为某一个类别型变量统计缺失值
+# missing_continuous_for_1      为某一个数值型变量统计缺失值 返回缺失率
+# missing_categorial            为df中所有类别型变量统计缺失值
+# missing_continuous            为df中所有连续型变量统计缺失值
+# max_bin_pcnt                  计算各个类别的占比 返回series
 
 import numpy as np
 import pandas as pd

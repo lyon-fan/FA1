@@ -3,14 +3,29 @@
 
 # Index
 # ----------------------------------------
-# makeup_miss_for_num        按照指定的方法对数据集的数字类型数据进行填充
-# makeup_miss_for_1_num     按照指定的方法对数据集的指定列数字类型数据进行填充
-# makeup_miss_for_str     按照指定的方法对数据集的字符串类型数据进行填充
-# makeup_miss_for_1_str   按照指定的方法对数据集的指定列字符串类型数据进行填充
-# density_encoder        对类别变量进行密度编码 包括Nan
-# drop_str_missing_over_pcnt   删除缺失率超过阈值的字符型变量 默认阈值0.5
-# drop_num_missing_over_pcnt  删除缺失率超过阈值的连续型变量 默认阈值0.3
-# bad_rate_encoding 计算类别型变量bad_rate 并排序输出
+# makeup_num_miss               按照指定的方法对数据集的数字类型数据进行填充
+# makeup_num_miss_for_1         按照指定的方法对数据集的指定列数字类型数据进行填充
+# makeup_str_miss               按照指定的方法对数据集的字符串类型数据进行填充
+# makeup_str_miss_for_1         按照指定的方法对数据集的指定列字符串类型数据进行填充
+# density_encoder               对类别变量进行密度编码 包括Nan
+# density_encoder_for_1         对数据集所有字符型特征进行浓度编码
+# drop_str_missing_over_pcnt    删除缺失率超过阈值的字符型变量 默认阈值0.5
+# drop_num_missing_over_pcnt    删除缺失率超过阈值的连续型变量 默认阈值0.3
+# bad_rate_encoding             计算类别型变量bad_rate 并排序输出
+# max_badrate_for_string_1      计算某个类别型变量最大类别占比
+# merge_bad0                    合并没有bad样本的组 将其合并到bad_rate最小且不为0的一组
+# calc_woe_iv                   计算WOE和IV值
+# woe_iv_for_string             处理类别型变量，并计算WOE、IV
+# inner_chi2                    计算卡方
+# inner_assign_group            根据值和分箱设置 进行分箱
+# assign_bin                    根据分箱点将连续型原数据进行转化 转化为类别型
+# bad_rate_monotone             检查各个分箱是否单调，单调返回True，否则返回False
+# chi_merge_max_interval        根据最大卡方法 对连续变量进行分箱 默认最大分箱数为5
+# woe_iv_for_num                计算数值型变量的WOE和IV
+# standard_max_min              最大最小值归一化
+# standard_std                  标准差归一化
+# bin_best_ks                   ks分箱法
+
 
 import random
 import numpy as np
@@ -90,7 +105,6 @@ def makeup_str_miss(p_df, p_str_var_list, p_method):
     :param p_method: 填充方法 'MODE' 'RANDOM'
     :return:
     """
-
     if p_method.upper() not in ['MODE', 'RANDOM']:
         print('Please specify the correct treatment method for missing continuous variable:MODE or Random!')
         return
@@ -415,6 +429,12 @@ def inner_chi2(p_df, p_total_col, p_bad_col, p_overall_rate):
 
 
 def inner_assign_group(p_value, p_bin):
+    """
+    根据值和分箱设置 进行分箱
+    :param p_value:
+    :param p_bin:
+    :return:
+    """
     n = len(p_bin)
     if p_value <= min(p_bin):
         return min(p_bin)
@@ -543,6 +563,17 @@ def chi_merge_max_interval(p_df, p_col, p_target, p_max_bin=5, p_special_attribu
 
 def woe_iv_for_num(p_df, p_str_num_list, p_target, p_deleted_var_list, p_var_iv_dict, p_var_woe_dict,
                    p_var_cutoff_dict):
+    """
+    计算数值型变量的WOE和IV
+    :param p_df:
+    :param p_str_num_list:
+    :param p_target:
+    :param p_deleted_var_list:
+    :param p_var_iv_dict:       IV结果字典
+    :param p_var_woe_dict:      WOE结果字典
+    :param p_var_cutoff_dict:   各个变量分箱切割点字典
+    :return:
+    """
     for col in p_str_num_list:
         print("{} is in processing".format(col))
         col1 = str(col) + '_Bin'
@@ -613,7 +644,7 @@ def standard_std(p_df, p_var, p_target):
 
 def bin_best_ks(p_df, p_var, p_target):
     """
-    ks分箱法 不推荐
+    ks分箱法
     :param p_df:
     :param p_var:
     :param p_target:
