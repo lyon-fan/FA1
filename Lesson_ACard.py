@@ -97,10 +97,10 @@ if __name__ == "__main__":
     # """
     # 探索数据分布
     # """
-    # u_explore.num_var_perf(p_df=allData, p_var_list=number_var_list, p_target_var=col_target,
-    #                        p_path=path_explore_result)
-    # u_explore.str_var_pref(p_df=allData, p_var_list=string_var_list, p_target_var=col_target,
-    #                        p_path=path_explore_result)
+    u_explore.num_var_perf(p_df=allData, p_var_list=number_var_list, p_target_var=col_target,
+                           p_path=path_explore_result)
+    u_explore.str_var_pref(p_df=allData, p_var_list=string_var_list, p_target_var=col_target,
+                           p_path=path_explore_result)
     # # ##########################################################
     # # #################4、Modify                  ###############
     # # ##########################################################
