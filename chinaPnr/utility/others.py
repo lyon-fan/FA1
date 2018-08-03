@@ -4,12 +4,12 @@
 
 # Index
 # ----------------------------------------
-# create_path     创建文件夹
-# list2txt        将list保存到txt中
-# txt2list        从Txt中读取List
-# create_frame    生成frame结构，便于查看
-# clear_index_html   恢复index.html初始状态
-# add_index_html      将索引写入index.html文件
+# create_path       创建文件夹
+# list2txt          将list保存到txt中
+# txt2list          从Txt中读取List
+# create_frame      生成frame结构，便于查看
+# clear_index_html  恢复index.html初始状态
+# add_index_html    将索引写入index.html文件
 
 import os
 

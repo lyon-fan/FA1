@@ -1,5 +1,10 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 # -*- coding:utf-8 -*-
+
+# Index
+# ----------------------------------------
+# ks_ar               计算AR和KS
+
 
 
 import numpy as np
@@ -8,6 +13,7 @@ import pandas as pd
 
 def ks_ar(df, score, target):
     """
+    计算AR和KS
     :param df:
     :param score:
     :param target:
