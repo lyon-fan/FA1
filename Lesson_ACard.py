@@ -59,99 +59,99 @@ if __name__ == "__main__":
     col_target = "target"
     # 排除字段名
     drop_var = ["ListingInfo"]
-    # ######################################################
-    # #############1、时间窗口设置            ##############
-    # ######################################################
-    """
-    时间窗口
-    """
-    time_windows_data = pd.read_csv(path_csv+"\\"+"timeWindows.csv", header=0, encoding="gbk")
-    time_windows = u_explore.time_window_selection(p_df=time_windows_data, p_days_col="ListingGap",
-                                                   p_time_windows=range(30, 361, 30),
-                                                   p_save_file=path_explore_result+"\\timeWindows.png")
-    # 得到类别型和数字型变量名列表并保存
-    """
-    数据读取
-    """
-    allData = pd.read_csv(path_csv+"\\"+"allData_0.csv", header=0, encoding="gbk")
-    string_var_list, number_var_list, all_var_list = u_explore.get_list_for_number_str_col(p_df=allData,
-                                                                                           p_col_id=col_id,
-                                                                                           p_col_target=col_target,
-                                                                                           p_drop_col=drop_var)
-    u_others.list2txt(path_explore_result, "var_string_list.csv", string_var_list)
-    u_others.list2txt(path_explore_result, "var_number_list.csv", number_var_list)
-    u_others.list2txt(path_explore_result, "all_var_list.csv", all_var_list)
-    # -------------------------------------------------------------------------------------------------
-    # todo 手动调字符串类型 连续型
-    # todo 如果重新跑数据 或者调整字段则 用txt2list()重新加载即可
-    string_var_list = u_others.txt2list(path_explore_result+"\\var_string_list.csv")
-    number_var_list = u_others.txt2list(path_explore_result+"\\var_number_list.csv")
-    all_var_list = u_others.txt2list(path_explore_result+"\\all_var_list.csv")
-    # #########################################################
-    # ################2、Sample                  ###############
-    # #########################################################
-
-    # ########################################################
-    # ###############3、Explore                 ###############
-    # ########################################################
-    """
-    探索数据分布
-    """
-    u_explore.num_var_perf(p_df=allData, p_var_list=number_var_list, p_target_var=col_target,
-                           p_path=path_explore_result)
-    u_explore.str_var_pref(p_df=allData, p_var_list=string_var_list, p_target_var=col_target,
-                           p_path=path_explore_result)
-    # ##########################################################
-    # #################4、Modify                  ###############
-    # ##########################################################
-    """
-    处理异常值:去掉取值完全一样的数据
-    """
-    for col in all_var_list:
-        if len(set(allData[col])) == 1:
-            print("delete {} from the dataset because it is a constant".format(col))
-            del allData[col]
-            all_var_list.remove(col)
-    string_var_list, number_var_list, all_var_list = u_explore.get_list_for_number_str_col(p_df=allData,
-                                                                                           p_col_id=col_id,
-                                                                                           p_col_target=col_target,
-                                                                                           p_drop_col=drop_var)
-    """
-    处理异常值:去掉缺失值超过阈值的变量 连续变量0.3 字符变量0.5
-    """
-    u_modify.drop_num_missing_over_pcnt(p_df=allData,  p_num_var_list=number_var_list, p_threshould=0.3)
-    u_modify.drop_str_missing_over_pcnt(p_df=allData,  p_str_var_list=string_var_list, p_threshould=0.5)
-
-    string_var_list, number_var_list, all_var_list = u_explore.get_list_for_number_str_col(p_df=allData,
-                                                                                           p_col_id=col_id,
-                                                                                           p_col_target=col_target,
-                                                                                           p_drop_col=drop_var)
-    u_others.list2txt(path_explore_result, "var_string_list.csv", string_var_list)
-    u_others.list2txt(path_explore_result, "var_number_list.csv", number_var_list)
-    u_others.list2txt(path_explore_result, "all_var_list.csv", all_var_list)
-
-    u_explore.missing_categorial(allData, string_var_list, path_explore_result+"\\"+"missing_categorial.csv")
-    u_explore.missing_continuous(allData, number_var_list, path_explore_result+"\\"+"missing_num.csv")
-
-    allData_bk = allData.copy()
-    """
-    天花板地板法：处理过大过小值
-    """
-    # todo 去掉异常值
-    """
-    填缺：缺失值填补
-    """
-    u_modify.makeup_num_miss(allData, number_var_list, "PERC50")
-    u_explore.missing_continuous(allData, number_var_list, path_explore_result+"\\"+"missing_num02.csv")
-    u_modify.makeup_str_miss(allData, string_var_list, "MODE")
-    u_explore.missing_categorial(allData, string_var_list, path_explore_result+"\\"+"missing_categorial02.csv")
-
-    allData.to_csv(path_csv+"\\"+"allData_makeup_missing.csv", header=True, encoding="gbk", columns=allData.columns,
-                   index=False)
-
-    """
-    变量分组 计算WOE IV
-    """
+    # # ######################################################
+    # # #############1、时间窗口设置            ##############
+    # # ######################################################
+    # """
+    # 时间窗口
+    # """
+    # time_windows_data = pd.read_csv(path_csv+"\\"+"timeWindows.csv", header=0, encoding="gbk")
+    # time_windows = u_explore.time_window_selection(p_df=time_windows_data, p_days_col="ListingGap",
+    #                                                p_time_windows=range(30, 361, 30),
+    #                                                p_save_file=path_explore_result+"\\timeWindows.png")
+    # # 得到类别型和数字型变量名列表并保存
+    # """
+    # 数据读取
+    # """
+    # allData = pd.read_csv(path_csv+"\\"+"allData_0.csv", header=0, encoding="gbk")
+    # string_var_list, number_var_list, all_var_list = u_explore.get_list_for_number_str_col(p_df=allData,
+    #                                                                                        p_col_id=col_id,
+    #                                                                                        p_col_target=col_target,
+    #                                                                                        p_drop_col=drop_var)
+    # u_others.list2txt(path_explore_result, "var_string_list.csv", string_var_list)
+    # u_others.list2txt(path_explore_result, "var_number_list.csv", number_var_list)
+    # u_others.list2txt(path_explore_result, "all_var_list.csv", all_var_list)
+    # # -------------------------------------------------------------------------------------------------
+    # # todo 手动调字符串类型 连续型
+    # # todo 如果重新跑数据 或者调整字段则 用txt2list()重新加载即可
+    # string_var_list = u_others.txt2list(path_explore_result+"\\var_string_list.csv")
+    # number_var_list = u_others.txt2list(path_explore_result+"\\var_number_list.csv")
+    # all_var_list = u_others.txt2list(path_explore_result+"\\all_var_list.csv")
+    # # #########################################################
+    # # ################2、Sample                  ###############
+    # # #########################################################
+    #
+    # # ########################################################
+    # # ###############3、Explore                 ###############
+    # # ########################################################
+    # """
+    # 探索数据分布
+    # """
+    # u_explore.num_var_perf(p_df=allData, p_var_list=number_var_list, p_target_var=col_target,
+    #                        p_path=path_explore_result)
+    # u_explore.str_var_pref(p_df=allData, p_var_list=string_var_list, p_target_var=col_target,
+    #                        p_path=path_explore_result)
+    # # ##########################################################
+    # # #################4、Modify                  ###############
+    # # ##########################################################
+    # """
+    # 处理异常值:去掉取值完全一样的数据
+    # """
+    # for col in all_var_list:
+    #     if len(set(allData[col])) == 1:
+    #         print("delete {} from the dataset because it is a constant".format(col))
+    #         del allData[col]
+    #         all_var_list.remove(col)
+    # string_var_list, number_var_list, all_var_list = u_explore.get_list_for_number_str_col(p_df=allData,
+    #                                                                                        p_col_id=col_id,
+    #                                                                                        p_col_target=col_target,
+    #                                                                                        p_drop_col=drop_var)
+    # """
+    # 处理异常值:去掉缺失值超过阈值的变量 连续变量0.3 字符变量0.5
+    # """
+    # u_modify.drop_num_missing_over_pcnt(p_df=allData,  p_num_var_list=number_var_list, p_threshould=0.3)
+    # u_modify.drop_str_missing_over_pcnt(p_df=allData,  p_str_var_list=string_var_list, p_threshould=0.5)
+    #
+    # string_var_list, number_var_list, all_var_list = u_explore.get_list_for_number_str_col(p_df=allData,
+    #                                                                                        p_col_id=col_id,
+    #                                                                                        p_col_target=col_target,
+    #                                                                                        p_drop_col=drop_var)
+    # u_others.list2txt(path_explore_result, "var_string_list.csv", string_var_list)
+    # u_others.list2txt(path_explore_result, "var_number_list.csv", number_var_list)
+    # u_others.list2txt(path_explore_result, "all_var_list.csv", all_var_list)
+    #
+    # u_explore.missing_categorial(allData, string_var_list, path_explore_result+"\\"+"missing_categorial.csv")
+    # u_explore.missing_continuous(allData, number_var_list, path_explore_result+"\\"+"missing_num.csv")
+    #
+    # allData_bk = allData.copy()
+    # """
+    # 天花板地板法：处理过大过小值
+    # """
+    # # todo 去掉异常值
+    # """
+    # 填缺：缺失值填补
+    # """
+    # u_modify.makeup_num_miss(allData, number_var_list, "PERC50")
+    # u_explore.missing_continuous(allData, number_var_list, path_explore_result+"\\"+"missing_num02.csv")
+    # u_modify.makeup_str_miss(allData, string_var_list, "MODE")
+    # u_explore.missing_categorial(allData, string_var_list, path_explore_result+"\\"+"missing_categorial02.csv")
+    #
+    # allData.to_csv(path_csv+"\\"+"allData_makeup_missing.csv", header=True, encoding="gbk", columns=allData.columns,
+    #                index=False)
+    #
+    # """
+    # 变量分组 计算WOE IV
+    # """
     trainData = pd.read_csv(path_csv+"\\"+"allData_1_bak.csv", header=0, encoding="gbk")
     # string_var_list, number_var_list, all_var_list = u_explore.get_list_for_number_str_col(p_df=trainData,
     #                                                                                        p_col_id=col_id,
@@ -471,21 +471,31 @@ if __name__ == "__main__":
     """
     trainData.to_csv(path_csv+"\\"+"allData_2.csv", header=True, encoding="gbk", columns=trainData.columns,
                      index=False)
-    var_woe_file = open(path_pkl+"\\"+"var_woe_dict.pkl", "wb")
-    pickle.dump(var_woe_dict, var_woe_file)
-    var_woe_file.close()
+
+    deleted_var_file = open(path_pkl+"\\"+"deleted_var_list.pkl", "wb")
+    pickle.dump(deleted_var_list, deleted_var_file)
+    deleted_var_file.close()
+
+    encoded_var_file = open(path_pkl+"\\"+"encoded_var_dict.pkl", "wb")
+    pickle.dump(encoded_var_dict, encoded_var_file)
+    encoded_var_file.close()
+
+    merged_var_file = open(path_pkl+"\\"+"merged_var_dict.pkl", "wb")
+    pickle.dump(merged_var_dict, merged_var_file)
+    merged_var_file.close()
 
     var_iv_file = open(path_pkl+"\\"+"var_iv_dict.pkl", "wb")
     pickle.dump(var_iv_dict, var_iv_file)
     var_iv_file.close()
 
+    var_woe_file = open(path_pkl+"\\"+"var_woe_dict.pkl", "wb")
+    pickle.dump(var_woe_dict, var_woe_file)
+    var_woe_file.close()
+
     var_cutoff_file = open(path_pkl+"\\"+"var_cutoff_dict.pkl", "wb")
     pickle.dump(var_cutoff_dict, var_cutoff_file)
     var_cutoff_file.close()
 
-    var_merged_file = open(path_pkl+"\\"+"merged_var_dict.pkl", "wb")
-    pickle.dump(merged_var_dict, var_merged_file)
-    var_merged_file.close()
     # #######################################################
     # ##############5、Model                   ###############
     # #######################################################

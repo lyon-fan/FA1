@@ -1,0 +1,4 @@
+merged_var_dict
+Out[20]: 
+{'SocialNetwork_17': ['SocialNetwork_17_mergeByBadRate',
+  {'0': 'Bin 0', '1': 'Bin 2', '2': 'Bin 1', '3': 'Bin 0'}]}

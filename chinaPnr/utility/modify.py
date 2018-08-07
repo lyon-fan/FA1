@@ -573,8 +573,12 @@ def woe_iv_for_num(p_df, p_str_num_list, p_target, p_deleted_var_list, p_var_iv_
     :param p_var_cutoff_dict:   各个变量分箱切割点字典
     :return:
     """
+
+    var_count = len(p_str_num_list)
+    i = 0
     for col in p_str_num_list:
-        print("{} is in processing".format(col))
+        print("{}/{} {} is in processing".format(i, var_count, col))
+        i = i + 1
         col1 = str(col) + '_Bin'
         # (1), 分割连续变量并保存分割点。-1是一种特殊情况，把它分成一组。
         # if -1 in set(p_df[col]):
