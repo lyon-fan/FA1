@@ -85,6 +85,101 @@ country3 = pd.Series({'Name': '澳大利亚',
 # df = pd.DataFrame([country1, country2, country3])
 df = pd.DataFrame([country1, country2, country3], index=['CH', 'US', 'AU'])
 
+# 去重
+df.loan_amnt.unique()
+# pandas 绘图
+data = pd.read_csv("\\CSV\\bankChurn.csv")
+fig = data.loan_amnt.hist(bins=50)
+fig.set_title('Loan Amount Requested')
+fig.set_xlabel('OPEN_ACC_DUR')
+fig.set_ylabel('churn')
+# 频数分布
+df['home_ownership'].value_counts()
+# 频数分布直方图
+fig = df['home_ownership'].value_counts().plot.bar()
+fig.set_title('Home Ownership')
+fig.set_ylabel('Number of customers')
+
+
+# 等频分箱
+# 将 Age 字段分到5个bin里
+Age_disccretised, intervals = pd.qcut(data.Age, 4, labels=None, retbins=True, precision=3, duplicates='raise')
+pd.concat([Age_disccretised, data.Age], axis=1).head(10)
+# 划分的区间
+intervals
+#  每一个区间内的样本量基本是相等的
+temp = pd.concat([Age_disccretised, data.Age], axis=1)
+temp.columns = ['Age_discretised', 'Age']
+temp.groupby('Age_discretised')['Age'].count()
+# 在分箱的时候也可以直接替换为标签
+Age_disccretised, intervals = pd.qcut(data.Age, 4, labels=['Q1', 'Q2', 'Q3', 'Q4'], retbins=True, precision=3, duplicates='raise')
+Age_disccretised.head()
+
+
+# 等距分箱
+# 分割训练集测试集
+X_train, X_test, y_train, y_test = train_test_split(data[['Age', 'Fare', 'Survived']], data.Survived, test_size=0.3,
+                                                    random_state=0)
+X_train.shape, X_test.shape
+((623, 3), (268, 3))
+
+
+# 用自定义的区间分箱
+# bucket boundaries
+buckets = [0,20,40,60,1000]
+# bucket labels
+labels = ['0-20', '20-40', '40-60', '>60']
+# discretisation
+data['Age_buckets_labels'] = pd.cut(data.Age, bins=buckets, labels = labels, include_lowest=True)
+data['Age_buckets'] = pd.cut(data.Age, bins=buckets, include_lowest=True)
+
+
+# 随机森林特征重要性
+# 训练随机森林
+from sklearn.ensemble import RandomForestClassifier
+forest = RandomForestClassifier(n_estimators=200, random_state=0, n_jobs=-1)
+forest.fit(X_train, y_train)
+importances = forest.feature_importances_
+indices = np.argsort(importances)[::-1]
+std = np.std([tree.feature_importances_ for tree in forest.estimators_],
+             axis=0) #  inter-trees variability. 衡量所有树中该特征的波动性
+print("Feature ranking:")
+
+for f in range(X_train.shape[1]):
+    print("%d. feature no:%d feature name:%s (%f)" % (f + 1, indices[f], feat_labels[indices[f]], importances[indices[f]]))
+# 对 top 15的特征作图。
+# 纵轴是重要性，黑色竖线是在所有tree上的波动(标准差)
+indices_top15 = indices[0:15]
+plt.figure()
+plt.title("Feature importances")
+plt.bar(range(15), importances[indices_top15],
+        color="r", yerr=std[indices_top15], align="center")
+plt.xticks(range(15), indices_top15)
+plt.xlim([-1,15])
+plt.show()
+# 选择重要性 > 某阈值的变量，也可以选择例如 1.5*median 2*mean的形式
+from sklearn.feature_selection import SelectFromModel
+
+
+# 如果选择重要性 >0.05 的特征，则只有368号和1号特征入选
+feature_selection = SelectFromModel(model, threshold=0.05,prefit=True)
+selected_feat = X_train.columns[(feature_selection.get_support())]
+selected_feat
+# 如果选择重要性 > 2倍中位数 的特征，则有163个特征入选
+feature_selection2 = SelectFromModel(model, threshold='2*median',prefit=True)
+selected_feat2 = X_train.columns[(feature_selection2.get_support())]
+selected_feat2
+
+
+
+
+
+
+
+
+
+
+
 # 添加数据
 # 如果个数小于要求的个数，会自动进行“广播”操作
 # 如果大于要求的个数，会报错
