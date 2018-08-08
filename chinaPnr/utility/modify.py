@@ -250,7 +250,7 @@ def bad_rate_encoding(p_df, p_col, p_target):
     for k, v in br_dict.items():
         br_dict[k] = v['bad_rate']
     bad_rate_enconding = p_df[p_col].map(lambda x: br_dict[x])
-    # ["bad_rate"]
+
     return {"encoding": bad_rate_enconding, "br_rate": br_dict}
 
 
@@ -474,11 +474,11 @@ def bad_rate_monotone(p_df, p_var, p_target, p_special_attribute=[]):
     :param p_special_attribute: 特殊值 不检查
     :return:
     """
-    df2 = p_df.loc[~p_df[p_var].isin(p_special_attribute)]
-    df2 = df2.sort_values([p_var])
-    total = df2.groupby([p_var])[p_target].count()
+    df_temp = p_df.loc[~p_df[p_var].isin(p_special_attribute)]
+    df_temp = df_temp.sort_values([p_var])
+    total = df_temp.groupby([p_var])[p_target].count()
     total = pd.DataFrame({'total': total})
-    bad = df2.groupby([p_var])[p_target].sum()
+    bad = df_temp.groupby([p_var])[p_target].sum()
     bad = pd.DataFrame({'bad': bad})
     regroup = total.merge(bad, left_index=True, right_index=True, how='left')
     regroup.reset_index(level=0, inplace=True)
@@ -610,13 +610,13 @@ def woe_iv_for_num(p_df, p_str_num_list, p_target, p_deleted_var_list, p_var_iv_
             p_var_cutoff_dict[col] = cut_off_points
 
         # (3), 检查某一分类是否占比90%以上 有的话 删除
-        maxPcnt = max_badrate_for_string_1(p_df, col1)
-        if maxPcnt > 0.9:
+        max_pcnt = max_badrate_for_string_1(p_df, col1)
+        if max_pcnt > 0.9:
             # del p_df[col1]
             p_deleted_var_list.append(col)
             print('we delete {} because the maximum bin occupies more than 90%'.format(col))
             continue
-        # (4), 删除元数据，并填充IV WOE的list
+        # (4), 填充IV WOE的list
         woe_iv = calc_woe_iv(p_df, col1, 'target')
         p_var_woe_dict[col] = woe_iv['WOE']
         p_var_iv_dict[col] = woe_iv['IV']

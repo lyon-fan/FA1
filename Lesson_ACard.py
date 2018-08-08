@@ -90,7 +90,8 @@ if __name__ == "__main__":
     # # #########################################################
     # # ################2、Sample                  ###############
     # # #########################################################
-    #
+    # X_train, X_test, y_train, y_test = train_test_split(
+    #     allData.drop(labels=['TARGET', 'ID'], axis=1), allData['TARGET'], test_size=0.3, random_state=0)
     # # ########################################################
     # # ###############3、Explore                 ###############
     # # ########################################################
@@ -504,17 +505,18 @@ if __name__ == "__main__":
     """
     trainData = pd.read_csv(path_csv+"\\"+"allData_2.csv", header=0, encoding="gbk")
 
-    with open(path_pkl+"\\"+"var_woe_dict.pkl", "rb") as f:
-        var_woe_dict = pickle.load(f, encoding="gbk")
-
-    with open(path_pkl+"\\"+"var_iv_dict.pkl", "rb") as f:
-        var_iv_dict = pickle.load(f, encoding="gbk")
-
-    with open(path_pkl+"\\"+"var_cutoff_dict.pkl", "rb") as f:
-        var_cutoff_dict = pickle.load(f, encoding="gbk")
-
+    with open(path_pkl+"\\"+"deleted_var_list.pkl", "rb") as f:
+        deleted_var_list = pickle.load(f)
+    with open(path_pkl+"\\"+"encoded_var_dict.pkl", "rb") as f:
+        encoded_var_dict = pickle.load(f)
     with open(path_pkl+"\\"+"merged_var_dict.pkl", "rb") as f:
-        merged_var_dict = pickle.load(f, encoding="gbk")
+        merged_var_dict = pickle.load(f)
+    with open(path_pkl+"\\"+"var_cutoff_dict.pkl", "rb") as f:
+        var_cutoff_dict = pickle.load(f)
+    with open(path_pkl+"\\"+"var_iv_dict.pkl", "rb") as f:
+        var_iv_dict = pickle.load(f)
+    with open(path_pkl+"\\"+"var_woe_dict.pkl", "rb") as f:
+        var_woe_dict = pickle.load(f)
 
     # 将一些看起来像数值变量实际上是类别变量的字段转换成字符
     num2str = ["SocialNetwork_13", "SocialNetwork_12", "UserInfo_6", "UserInfo_5", "UserInfo_10",
