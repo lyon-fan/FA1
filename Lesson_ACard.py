@@ -659,7 +659,7 @@ if __name__ == "__main__":
     RFC_Model = RFC.fit(X, y)
     features_rfc = trainData[var_WOE_list].columns
     featureImportance = {features_rfc[i]: RFC_Model.feature_importances_[i] for i in range(len(features_rfc))}
-    featureImportanceSorted = sorted(featureImportance.iteritems(), key=lambda x: x[1], reverse=True)
+    featureImportanceSorted = sorted(featureImportance.items(), key=lambda x: x[1], reverse=True)
     # 选择重要性排前十的变量
     features_selection = [k[0] for k in featureImportanceSorted[:10]]
     # 建立逻辑回归
@@ -667,7 +667,7 @@ if __name__ == "__main__":
     X = trainData[features_selection]
     X['intercept'] = [1]*X.shape[0]
     LR = sm.Logit(y, X).fit()
-    summary = LR.summary()
+    summary = LR.summary2()
 
     # ##########################################################
     # #################6、Assess                  ###############
