@@ -31,6 +31,49 @@ import random
 import numpy as np
 import pandas as pd
 import chinaPnr.utility.explore as u_explore
+import statsmodels.api as sm
+
+
+def one_feature_Logistic(p_var_list, p_df, p_target):
+    """
+    将变量逐个进行逻辑回归 返回各个变量的系数和pvalue
+    :param p_var_list:
+    :param p_df:
+    :param p_target:
+    :return:
+    """
+    feature_coef = []
+    feature_pvalue = []
+    for one_feature in p_var_list:
+        y = p_df[p_target]
+        X = pd.DataFrame(p_df[[one_feature]])
+        X["intercept"] = [1] * X.shape[0]
+        LR = sm.Logit(y, X).fit()
+        summary = LR.summary2()
+        # LR.pvalues.to_dict()[one_feature[0]]
+        feature_coef.append(LR.params[0])
+        feature_pvalue.append(LR.pvalues.to_dict()[one_feature])
+    dict_one_feature = {"feature": p_var_list, "coef": feature_coef, "pvalue": feature_pvalue}
+    df_one_feature = pd.DataFrame(dict_one_feature)
+    return df_one_feature
+
+
+def floor_ceil(df, col_list, low, high):
+    """
+    用分位数进行天花板 地板法 去掉异常值
+    :param df:
+    :param col_list:
+    :param low:
+    :param high:
+    :return:
+    """
+    final_df = df.copy()
+    for i in range(len(col_list)):
+        col = col_list[i]
+        l, h = df.loc[:, col].quantile([low, high])
+        final_df[col] = df[col].apply(lambda x: max(min(x, h), l))
+        print(str(i+1) + ' / ' + str(len(col_list)))
+    return final_df
 
 
 def makeup_num_miss(p_df, p_var_list, p_method):
