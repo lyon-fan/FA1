@@ -13,11 +13,160 @@
 # missing_categorial            为df中所有类别型变量统计缺失值
 # missing_continuous            为df中所有连续型变量统计缺失值
 # max_bin_pcnt                  计算各个类别的占比 返回series
+# heatmap                       返回相关系数热图
+# str_vs_num                    分类变量与数值型变量的交叉分析
+# scatter_num                   观察连续变量散点图
+# distribution_num              观察连续变量分布图及核函数
+# category_num_violin           观察连续变量在类别变量不同水平上的分布 小提琴图
+# stacked_bar                   不同类别的叠加计数（count）柱状图
+# num_2_num                     连续变量两两对照散点图
 
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot
+import seaborn as sns
 import chinaPnr.utility.others as u_others
+from itertools import combinations
+
+
+# 连续变量分布图
+#
+
+def num_2_num(p_df, p_num_list):
+    """
+    连续变量两两对照散点图
+    :param p_df:
+    :param p_num_list:
+    :return:
+    """
+    # p_df = trainData
+    # p_num_list = ["WeblogInfo_4",
+    #                    "ThirdParty_Info_Period1_2",
+    #                    "SocialNetwork_5",
+    #                    "LogInfo2_90_avg_count"]
+    compare = list(combinations(p_num_list, 2))
+    for pair in compare:
+        (x1, x2) = pair
+        sns.pairplot(p_df, size=12, x_vars=p_df[x1], y_vars=p_df[x2])
+        pyplot.show()
+num_2_num(trainData,["WeblogInfo_4",
+                       "ThirdParty_Info_Period1_2",
+                       "SocialNetwork_5",
+                       "LogInfo2_90_avg_count"])
+
+
+def stacked_bar(p_df, p_var_1, p_var_2):
+    """
+    不同类别的叠加计数（count）柱状图
+    :param p_df:
+    :param p_var_1: 主分类
+    :param p_var_2: 堆叠分类
+    :return:
+    """
+    order = list(set(p_df[p_var_2]))
+    df = p_df.groupby([p_var_1, p_var_2])[p_var_1].count().unstack([p_var_2]).fillna(0)
+    df[order].plot(kind='bar', stacked=True)
+    pyplot.show()
+# stacked_bar(trainData, "UserInfo_22", "SocialNetwork_12", "target")
+
+def category_num_violin(p_df, p_var, p_num, order=[]):
+    """
+    观察连续变量在类别变量不同水平上的分布 小提琴图
+    :param p_df:
+    :param p_var:
+    :param p_num:
+    :param order:
+    :return:
+    """
+    if len(order) > 0:
+        sns.violinplot(x=p_var, y=p_num, data=p_df, order=order)
+    else:
+        sns.violinplot(x=p_var, y=p_num, data=p_df)
+
+    pyplot.xlabel(p_var, fontsize=12)
+    pyplot.ylabel(p_num, fontsize=12)
+    pyplot.show()
+# category_num_violin(trainData, "WeblogInfo_34", "WeblogInfo_4")
+
+
+def distribution_num(p_df, p_num):
+    """
+    观察连续变量分布图及核函数
+    :param p_df:
+    :param p_num:
+    :return:
+    """
+    p99 = np.percentile(p_df[p_num].values, 99)
+    p01 = np.percentile(p_df[p_num].values, 1)
+    p_df[p_num].ix[p_df[p_num] > p99] = p99
+
+    sns.distplot(p_df[p_num].values, bins=50, kde=True)
+    pyplot.title("[{}]  per99:{};per01:{}".format(p_num, p99, p01))
+    pyplot.show()
+# distribution_num(trainData, "WeblogInfo_4")
+
+
+def scatter_num(p_df, p_num):
+    """
+    观察连续变量散点图
+    :param p_df:
+    :param p_num:
+    :return:
+    """
+    p99 = np.percentile(p_df[p_num].values, 99)
+    p01 = np.percentile(p_df[p_num].values, 1)
+    pyplot.scatter(range(p_df.shape[0]), p_df[p_num].values, color="purple")
+    pyplot.title("[{}]  per99:{};per01:{}".format(p_num,p99,p01))
+    pyplot.show()
+# scatter_num(trainData, "WeblogInfo_4")
+
+
+def str_vs_num(p_df, p_str, p_num, p_category=[]):
+    """
+    分类变量与数值型变量的交叉分析
+    :param p_df:
+    :param p_str:
+    :param p_num:
+    :param p_category:
+    :return:
+    """
+    if len(p_category) > 0 :
+        sns.stripplot(p_df[p_str], p_df[p_num], jitter=True, order=p_category)
+    else:
+        sns.stripplot(p_df[p_str], p_df[p_num], jitter=True)
+
+    pyplot.title("{} VS {}".format(p_str, p_num))
+    pyplot.show()
+# str_vs_num(trainData, "WeblogInfo_34", "WeblogInfo_4", p_category=[])
+
+# pyplot.figure(figsize=(15, 15))
+# sns.countplot(trainData["WeblogInfo_34"])
+# pyplot.show()
+
+# pyplot.figure(figsize=(15, 15))
+# sns.countplot(x="WeblogInfo_34", hue="target",data=trainData);
+# pyplot.show()
+
+
+def heatmap(p_df, p_var_list, p_mask_hold=0.5, p_show_value=True):
+    """
+    返回相关系数热图
+    :param p_df:
+    :param p_var_list:
+    :param p_mask_hold:
+    :param p_show_value:
+    :return:
+    """
+    pyplot.figure(figsize=(15, 15))
+    df_map = p_df[p_var_list].copy()
+    data_corr = df_map.corr().abs()
+    data_corr = data_corr.round(2)
+    print(data_corr)
+    # sns.heatmap(data_corr, mask=data_corr < p_mask_hold, cbar=False)
+    sns.heatmap(data_corr, mask=data_corr < p_mask_hold, annot=p_show_value)
+    pyplot.show()
+# heatmap(p_df=trainData, p_var_list=var_WOE_list, p_mask_hold=0)
+
 
 
 def get_list_for_number_str_col(p_df, p_col_id, p_col_target, p_drop_col=[] ):

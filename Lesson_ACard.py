@@ -59,55 +59,55 @@ if __name__ == "__main__":
     col_target = "target"
     # 排除字段名
     drop_var = ["ListingInfo"]
-    # # ######################################################
-    # # #############1、时间窗口设置            ##############
-    # # ######################################################
-    # """
-    # 时间窗口
-    # """
+    # ######################################################
+    # #############1、时间窗口设置            ##############
+    # ######################################################
+    """
+    时间窗口
+    """
     # time_windows_data = pd.read_csv(path_csv+"\\"+"timeWindows.csv", header=0, encoding="gbk")
     # time_windows = u_explore.time_window_selection(p_df=time_windows_data, p_days_col="ListingGap",
     #                                                p_time_windows=range(30, 361, 30),
     #                                                p_save_file=path_explore_result+"\\timeWindows.png")
-    # # 得到类别型和数字型变量名列表并保存
-    # """
-    # 数据读取
-    # """
-    # allData = pd.read_csv(path_csv+"\\"+"allData_0.csv", header=0, encoding="gbk")
-    # string_var_list, number_var_list, all_var_list = u_explore.get_list_for_number_str_col(p_df=allData,
-    #                                                                                        p_col_id=col_id,
-    #                                                                                        p_col_target=col_target,
-    #                                                                                        p_drop_col=drop_var)
-    # u_others.list2txt(path_explore_result, "var_string_list.csv", string_var_list)
-    # u_others.list2txt(path_explore_result, "var_number_list.csv", number_var_list)
-    # u_others.list2txt(path_explore_result, "all_var_list.csv", all_var_list)
-    # # -------------------------------------------------------------------------------------------------
-    # # todo 手动调字符串类型 连续型
-    # # todo 如果重新跑数据 或者调整字段则 用txt2list()重新加载即可
-    # string_var_list = u_others.txt2list(path_explore_result+"\\var_string_list.csv")
-    # number_var_list = u_others.txt2list(path_explore_result+"\\var_number_list.csv")
-    # all_var_list = u_others.txt2list(path_explore_result+"\\all_var_list.csv")
-    # # #########################################################
-    # # ################2、Sample                  ###############
-    # # #########################################################
+    # 得到类别型和数字型变量名列表并保存
+    """
+    数据读取
+    """
+    allData = pd.read_csv(path_csv+"\\"+"allData_0.csv", header=0, encoding="gbk")
+    string_var_list, number_var_list, all_var_list = u_explore.get_list_for_number_str_col(p_df=allData,
+                                                                                           p_col_id=col_id,
+                                                                                           p_col_target=col_target,
+                                                                                           p_drop_col=drop_var)
+    u_others.list2txt(path_explore_result, "var_string_list.csv", string_var_list)
+    u_others.list2txt(path_explore_result, "var_number_list.csv", number_var_list)
+    u_others.list2txt(path_explore_result, "all_var_list.csv", all_var_list)
+    # -------------------------------------------------------------------------------------------------
+    # todo 手动调字符串类型 连续型
+    # todo 如果重新跑数据 或者调整字段则 用txt2list()重新加载即可
+    string_var_list = u_others.txt2list(path_explore_result+"\\var_string_list.csv")
+    number_var_list = u_others.txt2list(path_explore_result+"\\var_number_list.csv")
+    all_var_list = u_others.txt2list(path_explore_result+"\\all_var_list.csv")
+    # #########################################################
+    # ################2、Sample                  ###############
+    # #########################################################
     # X_train, X_test, y_train, y_test = train_test_split(
     #     allData.drop(labels=['TARGET', 'ID'], axis=1), allData['TARGET'], test_size=0.3, random_state=0)
-    # # ########################################################
-    # # ###############3、Explore                 ###############
-    # # ########################################################
-    # """
-    # 探索数据分布
-    # """
+    # ########################################################
+    # ###############3、Explore                 ###############
+    # ########################################################
+    """
+    探索数据分布
+    """
     # u_explore.num_var_perf(p_df=allData, p_var_list=number_var_list, p_target_var=col_target,
     #                        p_path=path_explore_result)
     # u_explore.str_var_pref(p_df=allData, p_var_list=string_var_list, p_target_var=col_target,
     #                        p_path=path_explore_result)
-    # # ##########################################################
-    # # #################4、Modify                  ###############
-    # # ##########################################################
-    # """
-    # 处理异常值:去掉取值完全一样的数据
-    # """
+    # ##########################################################
+    # #################4、Modify                  ###############
+    # ##########################################################
+    """
+    处理异常值:去掉取值完全一样的数据
+    """
     # for col in all_var_list:
     #     if len(set(allData[col])) == 1:
     #         print("delete {} from the dataset because it is a constant".format(col))
@@ -117,9 +117,9 @@ if __name__ == "__main__":
     #                                                                                        p_col_id=col_id,
     #                                                                                        p_col_target=col_target,
     #                                                                                        p_drop_col=drop_var)
-    # """
-    # 处理异常值:去掉缺失值超过阈值的变量 连续变量0.3 字符变量0.5
-    # """
+    """
+    处理异常值:去掉缺失值超过阈值的变量 连续变量0.3 字符变量0.5
+    """
     # u_modify.drop_num_missing_over_pcnt(p_df=allData,  p_num_var_list=number_var_list, p_threshould=0.3)
     # u_modify.drop_str_missing_over_pcnt(p_df=allData,  p_str_var_list=string_var_list, p_threshould=0.5)
     #
@@ -135,13 +135,13 @@ if __name__ == "__main__":
     # u_explore.missing_continuous(allData, number_var_list, path_explore_result+"\\"+"missing_num.csv")
     #
     # allData_bk = allData.copy()
-    # """
-    # 天花板地板法：处理过大过小值
-    # """
-    # # todo 去掉异常值
-    # """
-    # 填缺：缺失值填补
-    # """
+    """
+    天花板地板法：处理过大过小值
+    """
+    # u_modify.floor_ceil(allData, number_var_list, 0.01, 0.99)
+    """
+    填缺：缺失值填补
+    """
     # u_modify.makeup_num_miss(allData, number_var_list, "PERC50")
     # u_explore.missing_continuous(allData, number_var_list, path_explore_result+"\\"+"missing_num02.csv")
     # u_modify.makeup_str_miss(allData, string_var_list, "MODE")
@@ -149,7 +149,7 @@ if __name__ == "__main__":
     #
     # allData.to_csv(path_csv+"\\"+"allData_makeup_missing.csv", header=True, encoding="gbk", columns=allData.columns,
     #                index=False)
-    #
+
     # """
     # 变量分组 计算WOE IV
     # """
@@ -444,58 +444,58 @@ if __name__ == "__main__":
                        "LogInfo2_180_avg_count"]
     all_var_list = string_var_list + number_var_list
 
-    for col in string_var_list:
-        if col not in ["UserInfo_7", "UserInfo_9", "UserInfo_19", "UserInfo_22", "UserInfo_23", "UserInfo_24",
-                       "Education_Info3", "Education_Info7", "Education_Info8"]:
-            trainData[col] = trainData[col].map(lambda x: str(x).upper())
-    number_var_list.remove("ListingGap")
-
-    deleted_var_list = []
-    encoded_var_dict = {}
-    merged_var_dict = {}
-    var_iv_dict = {}
-    var_woe_dict = {}
-    u_modify.woe_iv_for_string(p_df=trainData,
-                               p_str_var_list=string_var_list, p_num_var_list=number_var_list,
-                               p_target=col_target,
-                               p_deleted_var_list=deleted_var_list, p_encoded_var_dict=encoded_var_dict,
-                               p_merged_var_dict=merged_var_dict, p_var_iv_dict=var_iv_dict,
-                               p_var_woe_dict=var_woe_dict)
-    var_cutoff_dict = {}
-    number_var_list.remove("UserInfo_12")
-    # number_var_list=["WeblogInfo_13_encoding"]
-    u_modify.woe_iv_for_num(p_df=trainData, p_str_num_list=number_var_list, p_target=col_target,
-                            p_deleted_var_list=deleted_var_list, p_var_iv_dict=var_iv_dict,
-                            p_var_woe_dict=var_woe_dict, p_var_cutoff_dict=var_cutoff_dict)
-    """
-    保存结果
-    """
-    trainData.to_csv(path_csv+"\\"+"allData_2.csv", header=True, encoding="gbk", columns=trainData.columns,
-                     index=False)
-
-    deleted_var_file = open(path_pkl+"\\"+"deleted_var_list.pkl", "wb")
-    pickle.dump(deleted_var_list, deleted_var_file)
-    deleted_var_file.close()
-
-    encoded_var_file = open(path_pkl+"\\"+"encoded_var_dict.pkl", "wb")
-    pickle.dump(encoded_var_dict, encoded_var_file)
-    encoded_var_file.close()
-
-    merged_var_file = open(path_pkl+"\\"+"merged_var_dict.pkl", "wb")
-    pickle.dump(merged_var_dict, merged_var_file)
-    merged_var_file.close()
-
-    var_iv_file = open(path_pkl+"\\"+"var_iv_dict.pkl", "wb")
-    pickle.dump(var_iv_dict, var_iv_file)
-    var_iv_file.close()
-
-    var_woe_file = open(path_pkl+"\\"+"var_woe_dict.pkl", "wb")
-    pickle.dump(var_woe_dict, var_woe_file)
-    var_woe_file.close()
-
-    var_cutoff_file = open(path_pkl+"\\"+"var_cutoff_dict.pkl", "wb")
-    pickle.dump(var_cutoff_dict, var_cutoff_file)
-    var_cutoff_file.close()
+    # for col in string_var_list:
+    #     if col not in ["UserInfo_7", "UserInfo_9", "UserInfo_19", "UserInfo_22", "UserInfo_23", "UserInfo_24",
+    #                    "Education_Info3", "Education_Info7", "Education_Info8"]:
+    #         trainData[col] = trainData[col].map(lambda x: str(x).upper())
+    # number_var_list.remove("ListingGap")
+    #
+    # deleted_var_list = []
+    # encoded_var_dict = {}
+    # merged_var_dict = {}
+    # var_iv_dict = {}
+    # var_woe_dict = {}
+    # u_modify.woe_iv_for_string(p_df=trainData,
+    #                            p_str_var_list=string_var_list, p_num_var_list=number_var_list,
+    #                            p_target=col_target,
+    #                            p_deleted_var_list=deleted_var_list, p_encoded_var_dict=encoded_var_dict,
+    #                            p_merged_var_dict=merged_var_dict, p_var_iv_dict=var_iv_dict,
+    #                            p_var_woe_dict=var_woe_dict)
+    # var_cutoff_dict = {}
+    # number_var_list.remove("UserInfo_12")
+    # # number_var_list=["WeblogInfo_13_encoding"]
+    # u_modify.woe_iv_for_num(p_df=trainData, p_str_num_list=number_var_list, p_target=col_target,
+    #                         p_deleted_var_list=deleted_var_list, p_var_iv_dict=var_iv_dict,
+    #                         p_var_woe_dict=var_woe_dict, p_var_cutoff_dict=var_cutoff_dict)
+    # """
+    # 保存结果
+    # """
+    # trainData.to_csv(path_csv+"\\"+"allData_2.csv", header=True, encoding="gbk", columns=trainData.columns,
+    #                  index=False)
+    #
+    # deleted_var_file = open(path_pkl+"\\"+"deleted_var_list.pkl", "wb")
+    # pickle.dump(deleted_var_list, deleted_var_file)
+    # deleted_var_file.close()
+    #
+    # encoded_var_file = open(path_pkl+"\\"+"encoded_var_dict.pkl", "wb")
+    # pickle.dump(encoded_var_dict, encoded_var_file)
+    # encoded_var_file.close()
+    #
+    # merged_var_file = open(path_pkl+"\\"+"merged_var_dict.pkl", "wb")
+    # pickle.dump(merged_var_dict, merged_var_file)
+    # merged_var_file.close()
+    #
+    # var_iv_file = open(path_pkl+"\\"+"var_iv_dict.pkl", "wb")
+    # pickle.dump(var_iv_dict, var_iv_file)
+    # var_iv_file.close()
+    #
+    # var_woe_file = open(path_pkl+"\\"+"var_woe_dict.pkl", "wb")
+    # pickle.dump(var_woe_dict, var_woe_file)
+    # var_woe_file.close()
+    #
+    # var_cutoff_file = open(path_pkl+"\\"+"var_cutoff_dict.pkl", "wb")
+    # pickle.dump(var_cutoff_dict, var_cutoff_file)
+    # var_cutoff_file.close()
 
     # #######################################################
     # ##############5、Model                   ###############
@@ -560,8 +560,7 @@ if __name__ == "__main__":
         (x1, x2) = pair
         roh = np.corrcoef([trainData[str(x1)+"_WOE"], trainData[str(x2)+"_WOE"]])[0, 1]
         if abs(roh) >= roh_thresould:
-            print
-            '相关系数：【{0}】 【{1}】 ：is {2}'.format(x1, x2, str(roh))
+            print('相关系数：【{0}】 【{1}】 ：is {2}'.format(x1, x2, str(roh)))
             if var_iv_dict[x1] > var_iv_dict[x2]:
                 removed_var.append(x2)
             else:
@@ -581,11 +580,19 @@ if __name__ == "__main__":
         x_pred = clr.predict(X)
         R2 = 1 - ((x_pred - x0) ** 2).sum() / ((x0 - x0.mean()) ** 2).sum()
         vif = 1 / (1 - R2)
-        if vif > 10:
+        if vif > 5:
             print("Warning: the vif for {0} is {1}".format(var_IV_sorted_2[i], vif))
 
+    var_WOE_list = [i+"_WOE" for i in var_IV_sorted_2]
+
     """
-    建模1：在单因素分析和多因素分析的基础上，利用选择变量建立Logistic回归分析
+    单特征进行逻辑回归 过滤变量
+    """
+    df_one_feature_lg = u_modify.one_feature_Logistic(p_var_list=var_WOE_list, p_df=trainData, p_target=col_target)
+
+
+    """
+    建模1：利用选择变量建立Logistic回归分析
     """
     var_WOE_list = [i+"_WOE" for i in var_IV_sorted_2]
     y = trainData[col_target]
@@ -645,6 +652,7 @@ if __name__ == "__main__":
             performance = u_model.ks_ar(scorecard_result, 'prob', 'target')
             KS = performance['KS']
             model_parameter[(C_penalty, bad_weight)] = KS
+
     """
     根据RF特征重要性建立Logistic回归
     """
