@@ -25,6 +25,8 @@
 # standard_max_min              最大最小值归一化
 # standard_std                  标准差归一化
 # bin_best_ks                   ks分箱法
+# one_feature_Logistic          将变量逐个进行逻辑回归 返回各个变量的系数和pvalue
+# floor_ceil                    用分位数进行天花板 地板法 去掉异常值
 
 
 import random
